@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang='en'>
+  
+  <head>
+      <meta charset='utf-8'>
+      <title>Twitter Bot or Not</title>
+      <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+
+      <link rel="stylesheet" type = 'text/css' href="../static/botdetection.css">
+  </head>
+  
+
+  <body>
+    <div class="header">
+      <h1 class = "title">Twitter Bot Detector</h1>
+    </div>
+    <a class="button-back is-info is-rounded" href="{{ url_for('back') }}">Back</a>
+    <div class='make-prediction'>
+      <form class="form" method = 'POST' action='/predicthandle'>
+        <div class="control">
+          <div class="field">
+            <input class="input is-info is-rounded" type='text' name='handle' id='handle' placeholder="Enter a Twitter handle"><br>
+          </div>
+        </div>
+        <input class="button is-info is-rounded" style="font-weight:bold;" type='submit' value='Submit' method='get'>
+      </form>
+    </div>
+    <div class='prediction-results'>
+      <p class = "message">{{user_lookup_message}}</p>  
+      <h3 class= "pred">{{prediction | safe}}</h3>
+      <p class = "prob">{{probability}}</p>
+      <p class = "shap-text"> {{text}} </p>
+      <iframe class = "shap" srcdoc="{{shap_plots}}"></iframe>
+    </div>  
+  </body>
+
+</html>
