@@ -17,6 +17,7 @@ font-family: sans-serif;
 
 .field {
 height: 60px;
+
 }
 
 .input {
@@ -26,6 +27,7 @@ padding: 15px;
 width: 50%;
 border: 3px solid #1DA1F2;
 border-radius: 10px;
+
 }
 
 ::placeholder {

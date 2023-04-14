@@ -13,6 +13,13 @@ import shap
 import transformers
 from transformers import BertModel, BertTokenizer, pipeline
 from clean_tweets import process_text
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import Dense, Embedding, LSTM, Conv1D, MaxPool1D, BatchNormalization, Bidirectional, Input, Concatenate, concatenate, Masking
+from tensorflow.keras.utils import plot_model
+from tensorflow import keras
+import xgboost
 
 
 app = flask.Flask(__name__)
@@ -21,14 +28,18 @@ xgb_model = pickle.load(open('XGBoost.sav','rb'))
 shap_explainer = pickle.load(open('xgb_shap.sav','rb'))
 
 #Load the pretrained BERT model
-tokenizer = BertTokenizer.from_pretrained("bert-base-cased", padding = True)
+tokenizer = BertTokenizer.from_pretrained("prajjwal1/bert-tiny", padding = True)
 #load the pretrained model
-bert_model = BertModel.from_pretrained("bert-base-cased")
+bert_model = BertModel.from_pretrained("prajjwal1/bert-tiny")
 #create a pipeline in which the tweets get converted to bert features
 nlp = pipeline("feature-extraction", tokenizer=tokenizer, model=bert_model)
 
 #load the model that is used to predict whether a tweet is made by a human or a bot
-tweet_predictor = pickle.load(open('Bert_model.sav','rb'))
+#tweet_predictor = pickle.load(open('Bert_model.sav','rb'))
+tweet_predictor = keras.models.load_model("TrainedMCNNText")
+sc = pickle.load(open("StandardScaler.sav", 'rb'))
+
+
 
 def bot_likelihood(prob):
     if prob < 20:
@@ -124,14 +135,42 @@ def make_prediction_handle():
 @app.route('/predicttweet', methods=['GET', 'POST'])
 def make_prediction_tweet():
     tweet = flask.request.form['handle']
+    metadata = flask.request.form['metadata']
+    
+    lst = metadata.split(",")
+    
+    meta_features = []
+    for elem in lst:
+        elem = elem.replace(',','')
+        elem = elem.replace('[','')
+        elem = elem.replace(']','')
+        elem = int(elem)
+        meta_features.append(elem)
+    
+    meta_features = np.array(meta_features)
     #preprocess the incoming tweet
     processed_tweet = process_text(tweet)
     #convert the tweet to BERT encoding
     bert_features = np.array(nlp(processed_tweet))
-    #getting the mean representation of the tweet
-    bert_features = bert_features.reshape((bert_features.shape[1], bert_features.shape[2])).mean(axis = 0)
+    
+    
+    #adding padding to the text features
+    shp = bert_features.shape[1]
+    bert_features = np.pad(bert_features, ((0,0),(0,120 - shp),(0,0)), mode = 'constant', constant_values = -10)
+    print(bert_features.shape)
+    #scaling the metadata
+    meta_features = sc.transform(meta_features.reshape(1,-1))
+    print(meta_features.shape)
+
+    #bert_features = bert_features.reshape((bert_features.shape[1], bert_features.shape[2])).mean(axis = 0)
     #extracting the probability from the predict proba method of the model
-    probability = tweet_predictor.predict_proba(bert_features.reshape(1,-1))[0][1]
+    
+    #probability = tweet_predictor.predict_proba(bert_features.reshape(1,-1))[0][1]
+    #obtaining the prediction
+    prediction = tweet_predictor.predict([bert_features, meta_features])
+    print(prediction.shape)
+    probability = prediction[0][0]
+
     percentage = round(probability * 100, 3)
     
 
@@ -217,4 +256,4 @@ def get_user_features(screen_name):
 # for local dev
 if __name__ == '__main__':
     #debug = true just updates the thing everytime you save it
-    app.run(port = 5001) #debug=True
+    app.run(port = 5001, debug = True) 
