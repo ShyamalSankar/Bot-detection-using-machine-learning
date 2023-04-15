@@ -19,14 +19,16 @@ The findings of these experiments would be applicable in other social media cont
 * In this folder, we deploy the best machine learning models found during experimentation in a local flask environment. The instructions for usage are listed below.
 
 **4. Further Analysis**
+* In this folder, we selected several metadate features to test the fundamental differences between bot and human accounts. 
 
 **5. Model (Image)**
+* In this folder, we trained 2 Multi-Channel Neural Networks. The first combines the account level metadata with image (profile image) to output a final prediction. The other combines tweet metadata with textual data. The optimal model is picked and saved in the flask folder.
 
 **6. Model (Metadata)**
 * In this folder, we trained several models to determine the optimal machine learning model that can classify an account as human or bot based on its metadata. We then pick the optimal model and save it for deployment in the flask folder.
 
 **7. Model (Text)**
-* In this folder, we trained several models to determine the optimal machine learning model that can best classify a tweet as human written or bot generated. The optimal model is picked and saved in the flask folder.
+* In this folder, we trained several models to determine the optimal machine learning model that can best classify a tweet as human written or bot generated. 
 
 **8. Web Scraping**
 * Here, we perform webscrapping using the Tweepy API to obtain the relevant features for each account.
