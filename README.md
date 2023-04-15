@@ -9,6 +9,8 @@ We also aim to investigate the value in combining different kinds of data in the
 
 The findings of these experiments would be applicable in other social media contexts where bots are prevalent as well, not just for Twitter. 
 
+### Folder Information:
+
 **1. ETL + EDA + FE (Metadata)**
 * In this repository, we perform some data preprocessing, feature selection and feature engineering based on the features obtained for each account in the webscrapping stage. We also perform exploratory data analysis on the features to attempt to see any interesting patterns in the data. We aim to get some insights into the characteristics of the metadata for the bot accounts and the human accounts respectively.
 
@@ -22,13 +24,13 @@ The findings of these experiments would be applicable in other social media cont
 * In this folder, we selected several metadate features to test the fundamental differences between bot and human accounts. 
 
 **5. Model (Image)**
-* In this folder, we trained 2 Multi-Channel Neural Networks. The first combines the account level metadata with image (profile image) to output a final prediction. The other combines tweet metadata with textual data. The optimal model is picked and saved in the flask folder.
+* In this folder, we trained 2 Multi-Channel Neural Networks. The first combines the account level metadata with image (profile image) to classify an account as human or bot. The other combines tweet metadata with textual data to classify a tweet as human written or bot generated. 
 
 **6. Model (Metadata)**
 * In this folder, we trained several models to determine the optimal machine learning model that can classify an account as human or bot based on its metadata. We then pick the optimal model and save it for deployment in the flask folder.
 
 **7. Model (Text)**
-* In this folder, we trained several models to determine the optimal machine learning model that can best classify a tweet as human written or bot generated. 
+* In this folder, we trained several models to determine the optimal machine learning model that can best classify a tweet as human written or bot generated. The optimal model is picked and saved in the flask folder.
 
 **8. Web Scraping**
 * Here, we perform webscrapping using the Tweepy API to obtain the relevant features for each account.
